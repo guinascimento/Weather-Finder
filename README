@@ -1,0 +1,71 @@
+Author::    Guilherme Nascimento
+Copyright:: Copyright (c) 2009
+
+== Overview
+
+Weather Finder is a Ruby library to access Weather.com data (XOAP). The library uses Hpricot and MemCached and allows fetch current forecast data from anywhere location.
+
+In order to use this library, you need to get a partner_id and license_key from Weather.com service at:
+http://www.weather.com/services/xmloap.html
+
+After signed up, you will receive an email with partner_id and license_key.
+
+If you need read the complete terms and conditions about the use of the service, you can download the SDK from link below:
+http://download.weather.com/web/xml/sdk.zip
+
+In this .zip file, you can find too the graphical icons to represent the conditions associated with the current forecast.
+
+== Quick Install
+
+RubyGem:
+
+	sudo gem install weatherfinder
+
+== Fetching current conditions
+
+	require "weatherfinder"
+
+	service = Weather::WeatherFinder.new
+
+	# Partner ID and License Key provided by Weather.com
+	service.partner_id = your partner id
+	service.license_key = your license key
+
+	# Fetching current forecast from Rio de Janeiro ;)
+	forecast = service.load_forecast("BRXX0201")
+
+	puts "Current Description: " + forecast.current.description
+	puts "Current Temperature: " + forecast.current.temp
+	puts "Current Icon: " + forecast.current.icon
+	puts "Current Wind Speed: " + forecast.current.wind.speed
+
+== Fetching tomorrow's forecast:
+
+	puts "Tomorrow's High Temperature: " + forecast.tomorrow.high
+	puts "Tomorrow's Low Temperature: " + forecast.tomorrow.low
+	puts "Tomorrow's Sunrise: " + forecast.tomorrow.sunrise
+	puts "Tomorrow's Sunset: " + forecast.tomorrow.sunset
+	puts "Tomorrow's Wind Speed" + forecast.tomorrow.wind.speed
+
+== Future Forecasts
+
+Future forecasts can be accessed using day() method from Forecast class. This method accept an argument indicating the number of days that will be fetched. This functionality depends of the day that was defined at load_forecast() method.
+
+	puts "High Temperature 2 days from now: " + forecast.day(2).high
+	puts "High Temperature 2 days from now: " + forecast.day(2).low
+	puts "Sunrise 2 days from now: " + forecast.day(2).sunrise
+	puts "Sunset 2 days from now: " + forecast.day(2).sunset
+
+== Cache
+
+WeatherFinder uses Memcached[http://www.danga.com/memcached/] to support data caching. This functionality is very useful when a lot of requests are made by clients.
+
+You need to install Ruby-MemCache[http://www.deveiate.org/code/Ruby-MemCache/] Gem:
+
+	sudo gem install Ruby-MemCache
+
+After installation, you need to enable the cache:
+
+	service.enable_cache
+	service.cache.servers = "localhost:11211"
+	service.cache_expiry = 10
